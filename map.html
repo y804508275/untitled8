@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <title>Hello, World</title>
+    <style type="text/css">
+        html{height:100%}
+        body{height:100%;margin:0px;padding:0px}
+        #container{height:50%}
+    </style>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5doOBpnqfkYzGUuFwrOnftldguOmDiMC">
+        //v2.0版本的引用方式：src="http://api.map.baidu.com/api?v=2.0&ak=您的密钥"
+        //v1.4版本及以前版本的引用方式：src="http://api.map.baidu.com/api?v=1.4&key=您的密钥&callback=initialize"
+    </script>
+</head>
+
+<body>
+<div id="container"></div>
+<div id="search">
+    <input id="place" type="text" value="请输入地点">
+    <input type="submit" onclick="search_place()">
+    <input id="placeInfo" type="text" value="">
+    <input id="placeX" type="text" value="">
+    <input id="placeY" type="text" value="">
+</div>
+<script type="text/javascript">
+    var x,y;
+    function search_place(){
+        var placeInfo=eval(document.getElementById("place")).value;
+        var myGeo = new BMap.Geocoder();
+
+        // 将地址解析结果显示在地图上，并调整地图视野
+        myGeo.getPoint(placeInfo, function(point){
+            if (point) {
+                map.centerAndZoom(point, 16);
+                var marker=new BMap.Marker(point);
+                map.addOverlay(marker);
+                marker.addEventListener("click", function(e){     //监听标注事件
+                    myGeo.getLocation(new BMap.Point(e.point.lng, e.point.lat), function(result){
+                        if (result){
+                            eval(document.getElementById("placeInfo")).value=result.address;
+                            eval(document.getElementById("placeX")).value=e.point.lng;
+                            eval(document.getElementById("placeY")).value=e.point.lat;
+                        }
+                    });
+                });
+
+                marker.enableDragging();                    //可托拽的标注
+                marker.addEventListener("dragend", function(e){
+                    myGeo.getLocation(new BMap.Point(e.point.lng, e.point.lat), function(result){
+                        if (result){
+                            eval(document.getElementById("placeInfo")).value=result.address;
+                            eval(document.getElementById("placeX")).value=e.point.lng;
+                            eval(document.getElementById("placeY")).value=e.point.lat;
+                        }
+                    });
+                });
+            }
+        }, "");
+    }
+    var map = new BMap.Map("container");
+    var point = new BMap.Point(116.404, 39.915);
+    map.centerAndZoom(point, 15);
+    map.addControl(new BMap.NavigationControl());
+</script>
+
+</body>
+</html>

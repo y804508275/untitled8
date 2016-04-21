@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript">
+
+        var input=document.getElementById("fileUpload");
+        function readfile(event){
+
+            var file=event.files[0];
+            if(!/image\/\w+/.test(file.type)){
+                alert("文件必须为图片");
+                return false;
+            }
+
+            var reader=new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload=function(evt){
+                document.getElementById("picDiv").src=evt.target.result;
+
+            };
+
+        }
+    </script>
+</head>
+<body>
+    <h1>请选择图片</h1>
+    <input type="file" id="fileUpload" onchange="readfile(this)">
+    <img id="picDiv" width="600px" height="300px">
+</body>
+</html>
